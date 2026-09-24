@@ -1,0 +1,49 @@
+#!/bin/sh
+# ----------------------------------------------------------------------------
+# Maven Wrapper（轻量版）：本机没有 mvn 时自动下载 Maven 到 ~/.m2/wrapper
+# 用法：./mvnw spring-boot:run   或   ./mvnw -v
+# ----------------------------------------------------------------------------
+set -e
+
+BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROPS="$BASE_DIR/.mvn/wrapper/maven-wrapper.properties"
+MAVEN_USER_HOME="${MAVEN_USER_HOME:-$HOME/.m2}"
+DIST_DIR="$MAVEN_USER_HOME/wrapper/dists"
+
+# 本机已有 mvn 则直接使用
+if command -v mvn >/dev/null 2>&1; then
+    exec mvn "$@"
+fi
+
+if [ ! -f "$PROPS" ]; then
+    echo "[mvnw] 缺少 $PROPS" >&2
+    exit 1
+fi
+
+DIST_URL="$(sed -n 's/^distributionUrl=//p' "$PROPS" | tr -d '\r')"
+if [ -z "$DIST_URL" ]; then
+    echo "[mvnw] distributionUrl 未配置" >&2
+    exit 1
+fi
+
+DIST_NAME="$(basename "$DIST_URL" | sed 's/-bin\.tar\.gz$//')"
+DIST_TGZ="$DIST_DIR/$(basename "$DIST_URL")"
+MAVEN_HOME="$DIST_DIR/$DIST_NAME"
+
+if [ ! -d "$MAVEN_HOME/bin" ]; then
+    echo "[mvnw] 首次使用，正在下载 Maven: $DIST_URL"
+    mkdir -p "$DIST_DIR"
+    if command -v curl >/dev/null 2>&1; then
+        curl -fSL --progress-bar -o "$DIST_TGZ" "$DIST_URL"
+    elif command -v wget >/dev/null 2>&1; then
+        wget --show-progress -O "$DIST_TGZ" "$DIST_URL"
+    else
+        echo "[mvnw] 需要 curl 或 wget 来下载 Maven" >&2
+        exit 1
+    fi
+    echo "[mvnw] 解压中…"
+    tar -xzf "$DIST_TGZ" -C "$DIST_DIR"
+    rm -f "$DIST_TGZ"
+fi
+
+exec "$MAVEN_HOME/bin/mvn" "$@"

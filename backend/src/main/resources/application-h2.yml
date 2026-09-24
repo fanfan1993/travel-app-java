@@ -1,0 +1,17 @@
+# 免安装 MySQL 的演示配置：./mvnw spring-boot:run -Dspring-boot.run.profiles=h2
+# 内存数据库，重启数据重置（会自动重新播种 8 条目的地数据）
+spring:
+  datasource:
+    url: jdbc:h2:mem:pink_travel;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    database-platform: org.hibernate.dialect.H2Dialect
+
+logging:
+  level:
+    com.pinktravel: info
