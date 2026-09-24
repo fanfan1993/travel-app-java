@@ -16,6 +16,12 @@ pink-travel/
 > **Mock 与 Java 后端接口完全一致、同样监听 8080，二选一启动即可，不要同时运行。**
 > `GET /api/health` 可区分：Mock 返回 `mode: "mock"`，Java 返回 `mode: "java"`。
 
+## 页面效果
+##### 页面显示
+![screenshot](./images/home.png)
+
+![screenshot](./images/ai.png)
+
 ---
 
 ## 一、快速开始
